@@ -1,10 +1,28 @@
 export default function createMarkdownPreviewerTests() {
 
   describe('Markdown Previewer tests', function() {
-
-    const editor = document.getElementById('editor');
-    const preview = document.getElementById('preview');
-    const converter = document.getElementById('convert-markdown');
+    
+    var editor, preview, converter;
+    if (app && app._isVue) {
+      // register
+      /*Vue.component('my-component', Vue.extend({
+        template: document.getElementById('app').innerHTML
+      }));
+      
+      // create a root instance
+      var thisapp = new Vue({
+        el: '#app',
+        name: 'my-component'
+      })*/
+      var component_editor = Vue.extend(thisapp)
+      var mounted = new component().$mount()
+      editor = mounted.$refs.editor;
+      preview = mounted.$refs.preview;
+      
+    } else {
+      editor = document.getElementById('editor');
+      preview = document.getElementById('preview');
+    }
     let markdownOnLoad,
       previewOnLoad;
     if (editor)
@@ -20,11 +38,25 @@ export default function createMarkdownPreviewerTests() {
       if (preview.innerHTML === str) {
         return;
       } else {
-        // jQUERY OR JAVASCRIPT
         const eventJS = new Event('keyup', {bubbles: true}); // must be keyup to live preview
+        if (app && app._isVue) {
+          editor.value = str;
+          var getter = Vue.nextTick(function() {
+            editor = mounted.$refs.editor;
+            preview = mounted.$refs.preview;
+            if (editor) {
+              markdownOnLoad = editor.value;
+            }
+            if (preview) {
+              previewOnLoad = preview.innerHTML;
+            }
+          });
+        }
+        // jQUERY OR JAVASCRIPT
         editor.dispatchEvent(eventJS)
       }
     }
+    
 
     describe('#Tests', function() {
 
