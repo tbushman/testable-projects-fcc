@@ -14,9 +14,32 @@
   <!-- <script src='https://d3js.org/d3.v4.min.js'></script> -->
   <!-- <script src='https://d3js.org/topojson.v2.min.js'></script> -->
   <!-- <script src='https://d3js.org/d3-scale-chromatic.v1.min.js'></script> -->
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.js"></script>
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script> -->
-  <!-- <div id="app"></div> -->
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/http-vue-loader"></script>
+  <div id="app">
+  <h1 class="title is-1"> Markdown Previewer with Vue.js</h1>
+  <h2 class="title is-2">freeCodeCamp tests are failing</h2>
+  <button class="button is-danger is-outlined  is-medium" v-on:click="clearText">Click here to clear the Editor</button>
+  <div class="content columns">
+    <div class="editor column">
+      <div class="editor-header">
+        <h2 class="title is-2">Editor</h2>
+      </div>
+      <div class="editor-content">
+        <textarea id="editor" v-model="editorContent"></textarea>
+      </div>
+     </div>
+   <div class="preview column">
+      <div class="preview-header">
+        <h2 class="title is-2">Preview</h2>
+      </div>
+      <div id="preview" class="preview-content" v-html="preview"></div>
+   </div>
+</div>
+</div>
+
 
   <!-- KEEP THIS AND MAKE SURE YOU'VE CREATED A local_test/js directory -->
   <script src='js/bundle.js'></script>

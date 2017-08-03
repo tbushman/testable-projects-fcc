@@ -14,8 +14,15 @@ export default function createMarkdownPreviewerTests() {
         el: '#app',
         name: 'my-component'
       })*/
-      var component_editor = Vue.extend(thisapp)
-      var mounted = new component().$mount()
+      var component_editor = Vue.component('app', Vue.extend({
+				template: '#app',
+        data: function() {
+    	    return {
+    	     editorContent: {}
+         }
+       }
+     }))
+      var mounted = new Vue(component_editor).$mount()
       editor = mounted.$refs.editor;
       preview = mounted.$refs.preview;
       
