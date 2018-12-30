@@ -1,0 +1,263 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+html {
+	margin: 0; padding: 0; overflow: hidden; left: 0; right: 0; top: 0;
+	bottom: 0; width: 100%; height: 100%; position: absolute;
+	overflow-x: hidden; overflow-y: hidden;
+}
+body {
+  font-family: 'Open Sans', sans-serif;
+	margin: 0; padding: 0; overflow: hidden; left: 0; right: 0; top: 0;
+	bottom: 0; width: 100%; height: 100%; position: absolute;
+  overflow-x: hidden; overflow-y: hidden;
+	z-index: 0; background-color: #211e23;
+}
+a {
+  text-decoration: none;
+}
+.appTitle {
+	z-index: 999;
+	color: #36616d;
+	margin: 0;
+	padding-top: 0;
+	line-height: 1.3em;
+	font-size: 22px;
+  display: inline-block;
+}
+#app {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0; bottom: 0; right: 0;
+  margin:0;
+  pointer-events: all;
+  display: grid;
+  grid: 12vw 16vw auto 12vw / 12vw auto 12vw;
+
+}
+.container {
+  position: absolute;
+  grid-column-start: 2;
+  grid-row-start: 3;
+  grid-column-end: 3;
+  grid-row-end: 4;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 18vw);
+  grid-template-rows: repeat(auto-fit, 18vw);
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin: auto;
+}
+.container.header {
+  grid-row-start: 2;
+  grid-row-end: 3;
+  display: block;
+  padding: 8px;
+}
+.container.header > img, .container.header a {
+  display: inline-block;
+  position: relative;
+  padding: 0;
+}
+.container a {
+  width: 100%;
+}
+.container.modal {
+  z-index: 10;
+  display: table;
+  text-align: center;
+  padding: 8px;
+}
+.container.modal a {
+  display: table-row;
+  color: #fff;
+  width: 100%;
+  background-color: #36616d; 
+
+}
+.container.modal span {
+  display: table-cell;
+  vertical-align: middle;
+  cursor: pointer;
+}
+.container.modal a:hover {
+  color: #fff;
+  background-color: darkgreen;
+}
+.ui {
+  position: relative;
+  width: 16vw;
+  height: 16vw;
+  overflow: hidden;
+  margin: 8px;
+  transition-property: width,height;
+  transition-duration: 0.5s;
+  transition-delay: 0.2s;
+}
+.ui.active {
+  width: 8vw;
+  height: 8vw;
+  pointer-events: all;
+}
+.ui:hover {
+  width: 34vw;
+  height: 34vw;
+  z-index: 9;
+}
+.ui embed {
+  pointer-events: none;
+  position: relative;
+  width: 120%;
+  height: 120%;
+  transform: translate(-8%, -8%);
+  background-color: #fff;
+}
+</style> 
+</head><body>	<!-- begin vue template --><div id="app">
+<div v-if="active && data[active]" class="container modal">
+  <a href="data[active].URL" target="_blank">
+    <span v-text="'Visit '+ data[active].name" ></span>
+  </a>
+  <a @click="deactivate(active)">
+    <span class="button block" v-text="'cancel'"></span>
+  </a>
+</div>
+	<!-- main content -->
+<div class="container header" @click="deactivate(0)">
+  <img class="img-responsive" src='https://s3.amazonaws.com/freecodecamp/freecodecamp_logo.svg' alt='learn to code javascript at freeCodeCamp logo'></img>
+  <a class="tb-font-xl appTitle" href="https://github.com/freeCodeCamp/testable-projects-fcc" 
+  	v-text="'fCC Test-able Projects'" target="_blank"></a>
+  <div v-if="hov && data[hov]" class="appTitle" v-text="data[hov].name"></div>
+</div>
+<div class="container">
+  <div class="ui img" v-if="keys !== ''" v-for="(k, i) in keys" 
+    @mouseover="activate(k)" @touchstart="activate(k)"
+    @click="dialog(k)" @touchend="dialog(k)"
+    :class="k === active ? 'active' : ''"
+    >
+    <!-- each project is running on localhost 8001++ -->
+    <embed :src="data[k].URL"></embed>
+    <!--alternatively load codepens -->
+    <!--embed :src="data[k].codepen"></embed-->
+  </div>
+</div><!-- end main content container -->
+</div><!-- end Vue template --> <!-- Vue for reactivity -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js">
+</script>
+<script>
+  new Vue({
+    el: '#app',
+    data() {
+      return {
+        projectsPath: 'http://127.0.0.1',
+        port: 8000,
+        keys: '',
+        active: null,
+        hov: null,
+        data: {
+          'tribute-page': {
+            name: 'Tribute Page',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/zNqgVx'
+          },
+          portfolio: {
+            name: 'Personal Portfolio',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/zNBOYG'
+          },
+          'survey-form': {
+            name: 'Survey Form',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/VPaoNP'
+          },
+          'product-landing-page': {
+            name: 'Product Landing Page',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/RKRbwL'
+          },
+          'technical-docs-page': {
+            name: 'Technical Documentation Page',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/NdrKKL'
+          },
+          'random-quote-machine': {
+            name: 'Random Quote Machine',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/qRZeGZ'
+          },
+          'markdown-previewer': {
+            name: 'Markdown Previewer',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/GrZVVO'
+          },
+          'drum-machine': {
+            name: 'Drum Machine',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/MJyNMd'
+          },
+          'pomodoro-clock': {
+            name: 'Pomodoro Clock',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/XpKrrW'
+          },
+          'javascript-calculator': {
+            name: 'Javascript Calculator',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/wgGVVX'
+          },
+          'bar-chart': {
+            name: 'D3: Bar Chart',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/GrZVaM'
+          },
+          'scatter-plot': {
+            name: 'D3: Scatter Plot',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/bgpXyK'
+          },
+          'heat-map': {
+            name: 'D3: Heat Map',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/JEXgeY'
+          },
+          choropleth: {
+            name: 'D3: Choropleth',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/EZKqza'
+          },
+          'tree-map': {
+            name: 'D3: Tree Map',
+            URL: '',
+            codepen: 'https://codepen.io/freeCodeCamp/full/KaNGNR'
+          }
+        }
+      }
+    },
+    mounted(){
+      var self = this;
+      this.keys = Object.keys(this.data);
+      this.keys.forEach(function(key, i){
+        self.data[key].URL = self.projectsPath + ':' + (8000 + (i+1))
+      })
+    },
+    methods: {
+      activate(k) {
+        // logic for when a div is active (mouseover, touchstart)
+        console.log(k)
+        this.hov = k;
+      },
+      deactivate(k) {
+        // (mouseleave, touchend)
+        this.active = null;
+      },
+      dialog(k) {
+        this.active = k;
+      }
+    }
+  })
+</script>
+</body></html>

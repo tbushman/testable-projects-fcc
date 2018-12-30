@@ -1,0 +1,277 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {
+  font-family: 'Open Sans', sans-serif;
+  margin: 0; padding: 0;
+   overflow: hidden;
+   background-color: #211e23;
+}
+a {
+  text-decoration: none;
+}
+.appTitle {
+  color: #36616d;
+  margin: 0;
+  padding-top: 0;
+  line-height: 1.3em;
+  font-size: 22px;
+  display: inline-block;
+}
+#app {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0; bottom: 0; right: 0;
+  margin:0;
+  pointer-events: all;
+  display: grid;
+  grid: 1fr auto 1fr / 12vw auto 12vw;
+  overflow-y: scroll;
+  margin-right: -50px;
+  padding-right: 50px;
+}
+.container {
+  grid-column-start: 2;
+  grid-row-start: 2;
+  grid-column-end: 3;
+  grid-row-end: 3;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 18vw);
+  grid-template-rows: repeat(auto-fit, 18vw);
+  width: 100%;
+  height: 100%;
+  margin: auto;
+}
+.header {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  display: block;
+  padding: 8px;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+}
+.header > img, .header a {
+  display: inline-block;
+  position: relative;
+  padding: 0;
+}
+.container a, .header a {
+  width: 100%;
+}
+.modal {
+  z-index: 1000;
+  font-size: 2em;
+  color: darkgreen;
+  padding: 8px;
+  position: fixed;
+  top: 0;
+  right: 0;
+}
+.modal a {
+  cursor: pointer;
+}
+.ui {
+  width: 16vw;
+  height: 16vw;
+  overflow: hidden;
+  margin: 8px;
+  transition-property: width,height;
+  transition-duration: 0.5s;
+  transition-delay: 0.2s;
+  cursor: pointer;
+}
+.ui.active {
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 100;
+}
+.ui.active embed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: all;
+  width: 100vw;
+  height: 100vh;
+  transform: scale(1);
+  z-index: 100;
+}
+.ui:hover {
+  width: 34vw;
+  height: 34vw;
+  z-index: 9;
+}
+.ui embed {
+  position: relative;
+  pointer-events: none;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: top left;
+  transform: scale(0.5);
+  background-color: #fff;
+}
+.footer {
+  grid-column-start: 2;
+  grid-column-end: 3;
+  grid-row-start: 3;
+  grid-row-end: 4;
+  display: block;
+  padding: 8px;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+}
+
+</style>
+</head><body>  <!-- begin vue template --><div id="app">
+<div v-if="active && data[active]" class="modal">
+  <a @click="deactivate(active)">
+    <span class="button block" v-text="'X'"></span>
+  </a>
+</div>
+<!-- main content -->
+<div class="header" @click="deactivate(0)">
+  <img class="img-responsive" src='https://s3.amazonaws.com/freecodecamp/freecodecamp_logo.svg' alt='learn to code javascript at freeCodeCamp logo'></img>
+  <a class="tb-font-xl appTitle" href="https://github.com/freeCodeCamp/testable-projects-fcc"
+    v-text="'fCC Test-able Projects'" target="_blank"></a>
+  <div v-if="hov && data[hov]" class="appTitle" v-text="data[hov].name"></div>
+</div>
+<div class="container">
+  <div class="ui img" v-if="keys !== ''" v-for="(k, i) in keys"
+    @mouseover="activate(k)" @touchstart="activate(k)"
+    @click="dialog(k)" @touchend="dialog(k)"
+    :class="k === active ? 'active' : ''">
+    <!-- each project is running on localhost 8001++ -->
+    <embed :src="data[k].URL"></embed>
+    <!--alternatively load codepens -->
+    <!--embed :src="data[k].codepen"></embed-->
+  </div>
+</div><!-- end main content container -->
+<div class="footer"></div>
+</div><!-- end Vue template --> <!-- Vue for reactivity -->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<script>
+  const router = new VueRouter({
+    mode: 'history',
+    scrollBehavior: function(to, from, savedPosition) {
+      if (to.hash) {
+        this.app.active = to.hash.slice(1);
+      } else {
+        this.app.active = null;
+      }
+      return false;
+    },
+    routes: [
+        {path: '/'},
+    ]
+  })
+  const app = new Vue({
+    router,
+    el: '#app',
+    data() {
+      return {
+        keys: '',
+        active: null,
+        hov: null,
+        data: {
+          'tribute-page': {
+            name: 'Tribute Page',
+            URL: 'pages/tribute-page/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/zNqgVx',
+          },
+          portfolio: {
+            name: 'Personal Portfolio',
+            URL: 'pages/portfolio/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/zNBOYG',
+          },
+          'survey-form': {
+            name: 'Survey Form',
+            URL: 'pages/survey-form/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/VPaoNP',
+          },
+          'product-landing-page': {
+            name: 'Product Landing Page',
+            URL: 'pages/product-landing-page/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/RKRbwL',
+          },
+          'technical-docs-page': {
+            name: 'Technical Documentation Page',
+            URL: 'pages/technical-documentation-page/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/NdrKKL',
+          },
+          'random-quote-machine': {
+            name: 'Random Quote Machine',
+            URL: 'pages/random-quote-machine/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/qRZeGZ',
+          },
+          'markdown-previewer': {
+            name: 'Markdown Previewer',
+            URL: 'pages/markdown-previewer/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/GrZVVO',
+          },
+          'drum-machine': {
+            name: 'Drum Machine',
+            URL: 'pages/drum-machine/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/MJyNMd',
+          },
+          'pomodoro-clock': {
+            name: 'Pomodoro Clock',
+            URL: 'pages/pomodoro-clock/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/XpKrrW',
+          },
+          'javascript-calculator': {
+            name: 'Javascript Calculator',
+            URL: 'pages/javascript-calculator/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/wgGVVX',
+          },
+          'bar-chart': {
+            name: 'D3: Bar Chart',
+            URL: 'pages/d3-bar-chart/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/GrZVaM',
+          },
+          'scatter-plot': {
+            name: 'D3: Scatter Plot',
+            URL: 'pages/d3-scatter-plot/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/bgpXyK',
+          },
+          'heat-map': {
+            name: 'D3: Heat Map',
+            URL: 'pages/d3-heat-map/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/JEXgeY',
+          },
+          choropleth: {
+            name: 'D3: Choropleth',
+            URL: 'pages/d3-choropleth/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/EZKqza',
+          },
+          'tree-map': {
+            name: 'D3: Tree Map',
+            URL: 'pages/d3-tree-map/index.html',
+            codepen: 'https://codepen.io/freeCodeCamp/pen/KaNGNR',
+          }
+        }
+      }
+    },
+    mounted(){
+      this.keys = Object.keys(this.data);
+    },
+    methods: {
+      activate(k) {
+        // logic for when a div is active (mouseover, touchstart)
+        this.hov = k;
+      },
+      deactivate(k) {
+        // (mouseleave, touchend)
+        router.push({ path: '' });
+      },
+      dialog(k) {
+        router.push({ path: `#${k}` });
+      }
+    }
+  })
+</script>
+</body></html>

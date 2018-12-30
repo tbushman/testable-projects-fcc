@@ -1,0 +1,601 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta http-equiv="X-UA-Compatible" content="ie=edge"/><title>FCC: Drum Machine</title><style type="text/css">@import url("https://fonts.googleapis.com/css?family=Russo+One");
+body {
+  font-family: Russo One; }
+
+body {
+  user-select: none;
+  background-color: #8d8d8d; }
+
+#root {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; }
+
+.inner-container {
+  outline: 5px solid orange;
+  position: relative;
+  width: 660px;
+  text-align: center;
+  background-color: #b3b3b3; }
+  .inner-container .pad-bank {
+    width: 332px;
+    height: 272px;
+    display: inline-block;
+    margin: 20px; }
+    .inner-container .pad-bank .drum-pad {
+      position: relative;
+      float: left;
+      width: 100px;
+      height: 80px;
+      margin-right: 10px;
+      border-radius: 5px;
+      padding-top: 35px;
+      box-sizing: border-box;
+      cursor: pointer; }
+  .inner-container .logo {
+    position: absolute;
+    top: 5px;
+    right: 10px; }
+    .inner-container .logo .inner-logo {
+      display: inline-block;
+      font-style: italic;
+      font-weight: bold;
+      font-size: 20px; }
+  .inner-container .controls-container {
+    width: 240px;
+    height: 272px;
+    display: inline-block;
+    margin: 40px 20px 0 10px;
+    vertical-align: top; }
+    .inner-container .controls-container .control {
+      width: 100px;
+      margin: auto; }
+      .inner-container .controls-container .control p {
+        margin-bottom: 0; }
+    .inner-container .controls-container #display {
+      width: 200px;
+      background-color: gray;
+      margin: 15px auto;
+      padding: 15px;
+      box-sizing: border-box; }
+
+.outer-select, .inner-container .controls-container .control .select {
+  margin: auto;
+  border: 1px solid black;
+  width: 50px;
+  height: 20px;
+  padding: 1px;
+  background-color: black; }
+
+.inner-select, .inner-container .controls-container .control .select .inner {
+  width: 23px;
+  height: 19px;
+  background: blue;
+  border: 1px solid black;
+  box-sizing: border-box;
+  cursor: pointer; }
+
+@media screen and (max-width: 650px) {
+  .inner-container {
+    transform: scale(0.7); } }
+
+[type="range"] {
+  -webkit-appearance: none;
+  margin: 12.5px 0;
+  width: 100%; }
+  [type="range"]:focus {
+    outline: none; }
+  [type="range"]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 2px 2px 2px #222, 0 0 2px #2f2f2f;
+    background: #424242;
+    border: 1px solid #000;
+    border-radius: 0; }
+  [type="range"]::-webkit-slider-thumb {
+    box-shadow: 1px 1px 1px #111, 0 0 1px #1e1e1e;
+    border: 0 solid #fff;
+    height: 25px;
+    width: 8px;
+    border-radius: 0;
+    background: blue;
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -11px; }
+  [type="range"]:focus::-webkit-slider-runnable-track {
+    background: #4f4f4f; }
+  [type="range"]::-moz-range-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 2px 2px 2px #222, 0 0 2px #2f2f2f;
+    background: #424242;
+    border: 1px solid #000;
+    border-radius: 0; }
+  [type="range"]::-moz-range-thumb {
+    box-shadow: 1px 1px 1px #111, 0 0 1px #1e1e1e;
+    border: 0 solid #fff;
+    height: 25px;
+    width: 8px;
+    border-radius: 0;
+    background: blue;
+    cursor: pointer; }
+  [type="range"]::-ms-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: transparent;
+    border-color: transparent;
+    border-width: 8px 0;
+    color: transparent; }
+  [type="range"]::-ms-fill-lower {
+    box-shadow: 2px 2px 2px #222, 0 0 2px #2f2f2f;
+    background: #353535;
+    border: 1px solid #000;
+    border-radius: 0; }
+  [type="range"]::-ms-fill-upper {
+    box-shadow: 2px 2px 2px #222, 0 0 2px #2f2f2f;
+    background: #424242;
+    border: 1px solid #000;
+    border-radius: 0; }
+  [type="range"]::-ms-thumb {
+    box-shadow: 1px 1px 1px #111, 0 0 1px #1e1e1e;
+    border: 0 solid #fff;
+    height: 25px;
+    width: 8px;
+    border-radius: 0;
+    background: blue;
+    cursor: pointer; }
+  [type="range"]:focus::-ms-fill-lower {
+    background: #424242; }
+  [type="range"]:focus::-ms-fill-upper {
+    background: #4f4f4f; }
+</style></head><body><link
+  rel="stylesheet"
+  href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
+
+<div id="root"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.min.js"></script>
+<script>"use strict";
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+/* global React, ReactDOM */
+
+/* eslint-disable react/prop-types, react/no-multi-comp */
+// eslint-disable-next-line no-unused-vars
+var projectName = 'drum-machine'; // coded by @no-stack-dub-sack (github) / @no_stack_sub_sack (codepen)
+
+var bankOne = [{
+  keyCode: 81,
+  keyTrigger: 'Q',
+  id: 'Heater-1',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Heater-1.mp3'
+}, {
+  keyCode: 87,
+  keyTrigger: 'W',
+  id: 'Heater-2',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Heater-2.mp3'
+}, {
+  keyCode: 69,
+  keyTrigger: 'E',
+  id: 'Heater-3',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Heater-3.mp3'
+}, {
+  keyCode: 65,
+  keyTrigger: 'A',
+  id: 'Heater-4',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Heater-4_1.mp3'
+}, {
+  keyCode: 83,
+  keyTrigger: 'S',
+  id: 'Clap',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Heater-6.mp3'
+}, {
+  keyCode: 68,
+  keyTrigger: 'D',
+  id: 'Open-HH',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Dsc_Oh.mp3'
+}, {
+  keyCode: 90,
+  keyTrigger: 'Z',
+  id: "Kick-n'-Hat",
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Kick_n_Hat.mp3'
+}, {
+  keyCode: 88,
+  keyTrigger: 'X',
+  id: 'Kick',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/RP4_KICK_1.mp3'
+}, {
+  keyCode: 67,
+  keyTrigger: 'C',
+  id: 'Closed-HH',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Cev_H2.mp3'
+}];
+var bankTwo = [{
+  keyCode: 81,
+  keyTrigger: 'Q',
+  id: 'Chord-1',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Chord_1.mp3'
+}, {
+  keyCode: 87,
+  keyTrigger: 'W',
+  id: 'Chord-2',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Chord_2.mp3'
+}, {
+  keyCode: 69,
+  keyTrigger: 'E',
+  id: 'Chord-3',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Chord_3.mp3'
+}, {
+  keyCode: 65,
+  keyTrigger: 'A',
+  id: 'Shaker',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Give_us_a_light.mp3'
+}, {
+  keyCode: 83,
+  keyTrigger: 'S',
+  id: 'Open-HH',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Dry_Ohh.mp3'
+}, {
+  keyCode: 68,
+  keyTrigger: 'D',
+  id: 'Closed-HH',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Bld_H1.mp3'
+}, {
+  keyCode: 90,
+  keyTrigger: 'Z',
+  id: 'Punchy-Kick',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/punchy_kick_1.mp3'
+}, {
+  keyCode: 88,
+  keyTrigger: 'X',
+  id: 'Side-Stick',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/side_stick_1.mp3'
+}, {
+  keyCode: 67,
+  keyTrigger: 'C',
+  id: 'Snare',
+  url: 'https://s3.amazonaws.com/freecodecamp/drums/Brk_Snr.mp3'
+}];
+var activeStyle = {
+  backgroundColor: 'orange',
+  boxShadow: '0 3px orange',
+  height: 77,
+  marginTop: 13
+};
+var inactiveStyle = {
+  backgroundColor: 'grey',
+  marginTop: 10,
+  boxShadow: '3px 3px 5px black'
+};
+
+var DrumPad =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(DrumPad, _React$Component);
+
+  function DrumPad(props) {
+    var _this;
+
+    _classCallCheck(this, DrumPad);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(DrumPad).call(this, props));
+    _this.state = {
+      padStyle: inactiveStyle
+    };
+    _this.playSound = _this.playSound.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.handleKeyPress = _this.handleKeyPress.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.activatePad = _this.activatePad.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    return _this;
+  }
+
+  _createClass(DrumPad, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      document.addEventListener('keydown', this.handleKeyPress);
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      document.removeEventListener('keydown', this.handleKeyPress);
+    }
+  }, {
+    key: "handleKeyPress",
+    value: function handleKeyPress(e) {
+      if (e.keyCode === this.props.keyCode) {
+        this.playSound();
+      }
+    }
+  }, {
+    key: "activatePad",
+    value: function activatePad() {
+      if (this.props.power) {
+        if (this.state.padStyle.backgroundColor === 'orange') {
+          this.setState({
+            padStyle: inactiveStyle
+          });
+        } else {
+          this.setState({
+            padStyle: activeStyle
+          });
+        }
+      } else if (this.state.padStyle.marginTop === 13) {
+        this.setState({
+          padStyle: inactiveStyle
+        });
+      } else {
+        this.setState({
+          padStyle: {
+            height: 77,
+            marginTop: 13,
+            backgroundColor: 'grey',
+            boxShadow: '0 3px grey'
+          }
+        });
+      }
+    }
+  }, {
+    key: "playSound",
+    value: function playSound() {
+      var _this2 = this;
+
+      var sound = document.getElementById(this.props.keyTrigger);
+      sound.currentTime = 0;
+      sound.play();
+      this.activatePad();
+      setTimeout(function () {
+        return _this2.activatePad();
+      }, 100);
+      this.props.updateDisplay(this.props.clipId.replace(/-/g, ' '));
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      return React.createElement("div", {
+        className: "drum-pad",
+        id: this.props.clipId,
+        onClick: this.playSound,
+        style: this.state.padStyle
+      }, React.createElement("audio", {
+        className: "clip",
+        id: this.props.keyTrigger,
+        src: this.props.clip
+      }), this.props.keyTrigger);
+    }
+  }]);
+
+  return DrumPad;
+}(React.Component);
+
+var PadBank =
+/*#__PURE__*/
+function (_React$Component2) {
+  _inherits(PadBank, _React$Component2);
+
+  function PadBank(props) {
+    _classCallCheck(this, PadBank);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(PadBank).call(this, props));
+  }
+
+  _createClass(PadBank, [{
+    key: "render",
+    value: function render() {
+      var _this3 = this;
+
+      var padBank;
+
+      if (this.props.power) {
+        padBank = this.props.currentPadBank.map(function (drumObj, i, padBankArr) {
+          return React.createElement(DrumPad, {
+            clip: padBankArr[i].url,
+            clipId: padBankArr[i].id,
+            keyCode: padBankArr[i].keyCode,
+            keyTrigger: padBankArr[i].keyTrigger,
+            power: _this3.props.power,
+            updateDisplay: _this3.props.updateDisplay
+          });
+        });
+      } else {
+        padBank = this.props.currentPadBank.map(function (drumObj, i, padBankArr) {
+          return React.createElement(DrumPad, {
+            clip: "#",
+            clipId: padBankArr[i].id,
+            keyCode: padBankArr[i].keyCode,
+            keyTrigger: padBankArr[i].keyTrigger,
+            power: _this3.props.power,
+            updateDisplay: _this3.props.updateDisplay
+          });
+        });
+      }
+
+      return React.createElement("div", {
+        className: "pad-bank"
+      }, padBank);
+    }
+  }]);
+
+  return PadBank;
+}(React.Component);
+
+var App =
+/*#__PURE__*/
+function (_React$Component3) {
+  _inherits(App, _React$Component3);
+
+  function App(props) {
+    var _this4;
+
+    _classCallCheck(this, App);
+
+    _this4 = _possibleConstructorReturn(this, _getPrototypeOf(App).call(this, props));
+    _this4.state = {
+      power: true,
+      display: String.fromCharCode(160),
+      currentPadBank: bankOne,
+      currentPadBankId: 'Heater Kit',
+      sliderVal: 0.3
+    };
+    _this4.displayClipName = _this4.displayClipName.bind(_assertThisInitialized(_assertThisInitialized(_this4)));
+    _this4.selectBank = _this4.selectBank.bind(_assertThisInitialized(_assertThisInitialized(_this4)));
+    _this4.adjustVolume = _this4.adjustVolume.bind(_assertThisInitialized(_assertThisInitialized(_this4)));
+    _this4.powerControl = _this4.powerControl.bind(_assertThisInitialized(_assertThisInitialized(_this4)));
+    _this4.clearDisplay = _this4.clearDisplay.bind(_assertThisInitialized(_assertThisInitialized(_this4)));
+    return _this4;
+  }
+
+  _createClass(App, [{
+    key: "powerControl",
+    value: function powerControl() {
+      this.setState({
+        power: !this.state.power,
+        display: String.fromCharCode(160)
+      });
+    }
+  }, {
+    key: "selectBank",
+    value: function selectBank() {
+      if (this.state.power) {
+        if (this.state.currentPadBankId === 'Heater Kit') {
+          this.setState({
+            currentPadBank: bankTwo,
+            display: 'Smooth Piano Kit',
+            currentPadBankId: 'Smooth Piano Kit'
+          });
+        } else {
+          this.setState({
+            currentPadBank: bankOne,
+            display: 'Heater Kit',
+            currentPadBankId: 'Heater Kit'
+          });
+        }
+      }
+    }
+  }, {
+    key: "displayClipName",
+    value: function displayClipName(name) {
+      if (this.state.power) {
+        this.setState({
+          display: name
+        });
+      }
+    }
+  }, {
+    key: "adjustVolume",
+    value: function adjustVolume(e) {
+      var _this5 = this;
+
+      if (this.state.power) {
+        this.setState({
+          sliderVal: e.target.value,
+          display: 'Volume: ' + Math.round(e.target.value * 100)
+        });
+        setTimeout(function () {
+          return _this5.clearDisplay();
+        }, 1000);
+      }
+    }
+  }, {
+    key: "clearDisplay",
+    value: function clearDisplay() {
+      this.setState({
+        display: String.fromCharCode(160)
+      });
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this6 = this;
+
+      var powerSlider = this.state.power ? {
+        float: 'right'
+      } : {
+        float: 'left'
+      };
+      var bankSlider = this.state.currentPadBank === bankOne ? {
+        float: 'left'
+      } : {
+        float: 'right'
+      };
+      {
+        var clips = [].slice.call(document.getElementsByClassName('clip'));
+        clips.forEach(function (sound) {
+          sound.volume = _this6.state.sliderVal;
+        });
+      }
+      return React.createElement("div", {
+        className: "inner-container",
+        id: "drum-machine"
+      }, React.createElement(PadBank, {
+        clipVolume: this.state.sliderVal,
+        currentPadBank: this.state.currentPadBank,
+        power: this.state.power,
+        updateDisplay: this.displayClipName
+      }), React.createElement("div", {
+        className: "logo"
+      }, React.createElement("div", {
+        className: "inner-logo "
+      }, 'FCC' + String.fromCharCode(160)), React.createElement("i", {
+        className: "inner-logo fa fa-free-code-camp"
+      })), React.createElement("div", {
+        className: "controls-container"
+      }, React.createElement("div", {
+        className: "control"
+      }, React.createElement("p", null, "Power"), React.createElement("div", {
+        className: "select",
+        onClick: this.powerControl
+      }, React.createElement("div", {
+        className: "inner",
+        style: powerSlider
+      }))), React.createElement("p", {
+        id: "display"
+      }, this.state.display), React.createElement("div", {
+        className: "volume-slider"
+      }, React.createElement("input", {
+        max: "1",
+        min: "0",
+        onChange: this.adjustVolume,
+        step: "0.01",
+        type: "range",
+        value: this.state.sliderVal
+      })), React.createElement("div", {
+        className: "control"
+      }, React.createElement("p", null, "Bank"), React.createElement("div", {
+        className: "select",
+        onClick: this.selectBank
+      }, React.createElement("div", {
+        className: "inner",
+        style: bankSlider
+      })))));
+    }
+  }]);
+
+  return App;
+}(React.Component);
+
+ReactDOM.render(React.createElement(App, null), document.getElementById('root'));</script><script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script></body></html>

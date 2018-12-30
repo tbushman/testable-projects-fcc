@@ -1,0 +1,451 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta http-equiv="X-UA-Compatible" content="ie=edge"/><title>FCC: Pomodoro Clock</title><style type="text/css">@font-face {
+  font-family: "Digital";
+  src: url("//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.eot");
+  src: url("//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.eot?#iefix") format("embedded-opentype"), url("//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.woff2") format("woff2"), url("//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.woff") format("woff"), url("//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.ttf") format("truetype"), url("//db.onlinewebfonts.com/t/8e22783d707ad140bffe18b2a3812529.svg#Digital-7") format("svg"); }
+
+body {
+  background: #1e555c;
+  color: white;
+  font-size: 30px;
+  text-align: center;
+  font-family: "Righteous"; }
+  body #container {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center; }
+    body #container .main-title {
+      font-size: 50px;
+      margin-bottom: 20px; }
+    body #container .length-control {
+      width: 250px; }
+    body #container button {
+      background: none;
+      outline: none;
+      border: none;
+      color: white;
+      cursor: pointer; }
+    body #container .btn-level,
+    body #container .length-control {
+      display: inline-block; }
+      body #container .btn-level .btn-level:nth-child(3),
+      body #container .length-control .btn-level:nth-child(3) {
+        width: 40px; }
+    body #container .timer {
+      border: 7px solid #13353a;
+      margin: 20px auto 10px auto;
+      width: 270px;
+      height: 160px;
+      border-radius: 50px;
+      position: relative; }
+      body #container .timer .timer-wrapper {
+        position: absolute;
+        width: 190px;
+        height: 110px;
+        left: 50%;
+        top: 50%;
+        margin-left: -95px;
+        margin-top: -57px; }
+      body #container .timer #time-left {
+        font-family: digital;
+        font-size: 80px; }
+      body #container .timer .timer-control button:active {
+        color: #13353a; }
+
+@media screen and (max-width: 500px) {
+  #container {
+    transform: scale(0.8);
+    -webkit-transform: scale(0.8);
+    -moz-transform: scale(0.8);
+    -ms-transform: scale(0.8);
+    -o-transform: scale(0.8); } }
+
+.author {
+  text-align: center;
+  font-family: Share Tech Mono, sans;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #a50d0d; }
+  .author a {
+    text-decoration: none;
+    color: #00264d;
+    line-height: 26px; }
+</style></head><body><link
+  rel="stylesheet"
+  href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+/>
+<div id="container"><div id="app"></div></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.2/react.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/15.3.1/react-dom.min.js"></script>
+<script>"use strict";
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+/* global React, ReactDOM */
+
+/* eslint-disable react/no-multi-comp, react/prop-types, max-len */
+// coded by @no-stack-dub-sack (github) / @no_stack_sub_sack (codepen)
+
+/** NOTES:
+/** Dependencies are React, ReactDOM, and
+    Accurate_Interval.js by Squuege (external script
+    to keep setInterval() from drifting over time &
+    thus ensuring timer goes off at correct mark).
+/** Utilizes embedded <Audio> tag to ensure audio
+    plays when timer tab is inactive or browser is
+    minimized ( rather than new Audio().play() ).
+/** Audio of this fashion not supported on most
+    mobile devices it would seem (bummer I know).
+**/
+// PROJECTOR SELECTOR FOR EXTERNAL TEST SCRIPT:
+// eslint-disable-next-line no-unused-vars
+var projectName = 'pomodoro-clock'; // Accurate_Interval.js
+// Thanks Squeege! For the elegant answer provided to this question:
+// http://stackoverflow.com/questions/8173580/setinterval-timing-slowly-drifts-away-from-staying-accurate
+// Github: https://gist.github.com/Squeegy/1d99b3cd81d610ac7351
+// Slightly modified to accept 'normal' interval/timeout format (func, time).
+
+var accurateInterval = function accurateInterval(fn, time) {
+  var cancel, nextAt, timeout, _wrapper;
+
+  nextAt = new Date().getTime() + time;
+  timeout = null;
+
+  _wrapper = function wrapper() {
+    nextAt += time;
+    timeout = setTimeout(_wrapper, nextAt - new Date().getTime());
+    return fn();
+  };
+
+  cancel = function cancel() {
+    return clearTimeout(timeout);
+  };
+
+  timeout = setTimeout(_wrapper, nextAt - new Date().getTime());
+  return {
+    cancel: cancel
+  };
+}; // COMPONENTS:
+
+
+var TimerLengthControl =
+/*#__PURE__*/
+function (_React$Component) {
+  _inherits(TimerLengthControl, _React$Component);
+
+  function TimerLengthControl() {
+    _classCallCheck(this, TimerLengthControl);
+
+    return _possibleConstructorReturn(this, _getPrototypeOf(TimerLengthControl).apply(this, arguments));
+  }
+
+  _createClass(TimerLengthControl, [{
+    key: "render",
+    value: function render() {
+      return React.createElement("div", {
+        className: "length-control"
+      }, React.createElement("div", {
+        id: this.props.titleID
+      }, this.props.title), React.createElement("button", {
+        className: "btn-level",
+        id: this.props.minID,
+        onClick: this.props.onClick,
+        value: "-"
+      }, React.createElement("i", {
+        className: "fa fa-arrow-down fa-2x"
+      })), React.createElement("div", {
+        className: "btn-level",
+        id: this.props.lengthID
+      }, this.props.length), React.createElement("button", {
+        className: "btn-level",
+        id: this.props.addID,
+        onClick: this.props.onClick,
+        value: "+"
+      }, React.createElement("i", {
+        className: "fa fa-arrow-up fa-2x"
+      })));
+    }
+  }]);
+
+  return TimerLengthControl;
+}(React.Component);
+
+var Timer =
+/*#__PURE__*/
+function (_React$Component2) {
+  _inherits(Timer, _React$Component2);
+
+  function Timer(props) {
+    var _this;
+
+    _classCallCheck(this, Timer);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Timer).call(this, props));
+    _this.state = {
+      brkLength: 5,
+      seshLength: 25,
+      timerState: 'stopped',
+      timerType: 'Session',
+      timer: 1500,
+      intervalID: '',
+      alarmColor: {
+        color: 'white'
+      }
+    };
+    _this.setBrkLength = _this.setBrkLength.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.setSeshLength = _this.setSeshLength.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.lengthControl = _this.lengthControl.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.timerControl = _this.timerControl.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.beginCountDown = _this.beginCountDown.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.decrementTimer = _this.decrementTimer.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.phaseControl = _this.phaseControl.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.warning = _this.warning.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.buzzer = _this.buzzer.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.switchTimer = _this.switchTimer.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.clockify = _this.clockify.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.reset = _this.reset.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    return _this;
+  }
+
+  _createClass(Timer, [{
+    key: "setBrkLength",
+    value: function setBrkLength(e) {
+      this.lengthControl('brkLength', e.currentTarget.value, this.state.brkLength, 'Session');
+    }
+  }, {
+    key: "setSeshLength",
+    value: function setSeshLength(e) {
+      this.lengthControl('seshLength', e.currentTarget.value, this.state.seshLength, 'Break');
+    }
+  }, {
+    key: "lengthControl",
+    value: function lengthControl(stateToChange, sign, currentLength, timerType) {
+      if (this.state.timerState === 'running') {
+        return;
+      }
+
+      if (this.state.timerType === timerType) {
+        if (sign === '-' && currentLength !== 1) {
+          this.setState(_defineProperty({}, stateToChange, currentLength - 1));
+        } else if (sign === '+' && currentLength !== 60) {
+          this.setState(_defineProperty({}, stateToChange, currentLength + 1));
+        }
+      } else if (sign === '-' && currentLength !== 1) {
+        var _this$setState3;
+
+        this.setState((_this$setState3 = {}, _defineProperty(_this$setState3, stateToChange, currentLength - 1), _defineProperty(_this$setState3, "timer", currentLength * 60 - 60), _this$setState3));
+      } else if (sign === '+' && currentLength !== 60) {
+        var _this$setState4;
+
+        this.setState((_this$setState4 = {}, _defineProperty(_this$setState4, stateToChange, currentLength + 1), _defineProperty(_this$setState4, "timer", currentLength * 60 + 60), _this$setState4));
+      }
+    }
+  }, {
+    key: "timerControl",
+    value: function timerControl() {
+      if (this.state.timerState === 'stopped') {
+        this.beginCountDown();
+        this.setState({
+          timerState: 'running'
+        });
+      } else {
+        this.setState({
+          timerState: 'stopped'
+        });
+
+        if (this.state.intervalID) {
+          this.state.intervalID.cancel();
+        }
+      }
+    }
+  }, {
+    key: "beginCountDown",
+    value: function beginCountDown() {
+      var _this2 = this;
+
+      this.setState({
+        intervalID: accurateInterval(function () {
+          _this2.decrementTimer();
+
+          _this2.phaseControl();
+        }, 1000)
+      });
+    }
+  }, {
+    key: "decrementTimer",
+    value: function decrementTimer() {
+      this.setState({
+        timer: this.state.timer - 1
+      });
+    }
+  }, {
+    key: "phaseControl",
+    value: function phaseControl() {
+      var timer = this.state.timer;
+      this.warning(timer);
+      this.buzzer(timer);
+
+      if (timer < 0) {
+        if (this.state.intervalID) {
+          this.state.intervalID.cancel();
+        }
+
+        if (this.state.timerType === 'Session') {
+          this.beginCountDown();
+          this.switchTimer(this.state.brkLength * 60, 'Break');
+        } else {
+          this.beginCountDown();
+          this.switchTimer(this.state.seshLength * 60, 'Session');
+        }
+      }
+    }
+  }, {
+    key: "warning",
+    value: function warning(_timer) {
+      if (_timer < 61) {
+        this.setState({
+          alarmColor: {
+            color: '#a50d0d'
+          }
+        });
+      } else {
+        this.setState({
+          alarmColor: {
+            color: 'white'
+          }
+        });
+      }
+    }
+  }, {
+    key: "buzzer",
+    value: function buzzer(_timer) {
+      if (_timer === 0) {
+        this.audioBeep.play();
+      }
+    }
+  }, {
+    key: "switchTimer",
+    value: function switchTimer(num, str) {
+      this.setState({
+        timer: num,
+        timerType: str,
+        alarmColor: {
+          color: 'white'
+        }
+      });
+    }
+  }, {
+    key: "clockify",
+    value: function clockify() {
+      var minutes = Math.floor(this.state.timer / 60);
+      var seconds = this.state.timer - minutes * 60;
+      seconds = seconds < 10 ? '0' + seconds : seconds;
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      return minutes + ':' + seconds;
+    }
+  }, {
+    key: "reset",
+    value: function reset() {
+      this.setState({
+        brkLength: 5,
+        seshLength: 25,
+        timerState: 'stopped',
+        timerType: 'Session',
+        timer: 1500,
+        intervalID: '',
+        alarmColor: {
+          color: 'white'
+        }
+      });
+
+      if (this.state.intervalID) {
+        this.state.intervalID.cancel();
+      }
+
+      this.audioBeep.pause();
+      this.audioBeep.currentTime = 0;
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this3 = this;
+
+      return React.createElement("div", null, React.createElement("div", {
+        className: "main-title"
+      }, "Pomodoro Clock"), React.createElement(TimerLengthControl, {
+        addID: "break-increment",
+        length: this.state.brkLength,
+        lengthID: "break-length",
+        minID: "break-decrement",
+        onClick: this.setBrkLength,
+        title: "Break Length",
+        titleID: "break-label"
+      }), React.createElement(TimerLengthControl, {
+        addID: "session-increment",
+        length: this.state.seshLength,
+        lengthID: "session-length",
+        minID: "session-decrement",
+        onClick: this.setSeshLength,
+        title: "Session Length",
+        titleID: "session-label"
+      }), React.createElement("div", {
+        className: "timer",
+        style: this.state.alarmColor
+      }, React.createElement("div", {
+        className: "timer-wrapper"
+      }, React.createElement("div", {
+        id: "timer-label"
+      }, this.state.timerType), React.createElement("div", {
+        id: "time-left"
+      }, this.clockify()))), React.createElement("div", {
+        className: "timer-control"
+      }, React.createElement("button", {
+        id: "start_stop",
+        onClick: this.timerControl
+      }, React.createElement("i", {
+        className: "fa fa-play fa-2x"
+      }), React.createElement("i", {
+        className: "fa fa-pause fa-2x"
+      })), React.createElement("button", {
+        id: "reset",
+        onClick: this.reset
+      }, React.createElement("i", {
+        className: "fa fa-refresh fa-2x"
+      }))), React.createElement("div", {
+        className: "author"
+      }, ' ', "Designed and Coded by ", React.createElement("br", null), React.createElement("a", {
+        href: "https://goo.gl/6NNLMG",
+        target: "_blank"
+      }, "Peter Weinberg")), React.createElement("audio", {
+        id: "beep",
+        preload: "auto",
+        ref: function ref(audio) {
+          _this3.audioBeep = audio;
+        },
+        src: "https://goo.gl/65cBl1"
+      }));
+    }
+  }]);
+
+  return Timer;
+}(React.Component);
+
+ReactDOM.render(React.createElement(Timer, null), document.getElementById('app'));</script><script src="https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js"></script></body></html>
