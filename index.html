@@ -11,7 +11,7 @@ a {
   text-decoration: none;
 }
 .appTitle {
-  color: #36616d;
+  color: darkgreen;
   margin: 0;
   padding-top: 0;
   line-height: 1.3em;
@@ -31,6 +31,7 @@ a {
   overflow-y: scroll;
   margin-right: -50px;
   padding-right: 50px;
+  padding-bottom: -50px;
 }
 .container {
   grid-column-start: 2;
@@ -38,8 +39,8 @@ a {
   grid-column-end: 3;
   grid-row-end: 3;
   display: grid;
-  grid-template-columns: repeat(auto-fit, 18vw);
-  grid-template-rows: repeat(auto-fit, 18vw);
+  grid-template-columns: repeat(auto-fit, 68vw);
+  grid-template-rows: repeat(auto-fit, 68vw);
   width: 100%;
   height: 100%;
   margin: auto;
@@ -51,7 +52,12 @@ a {
   padding: 8px;
   margin: auto;
   width: 100%;
-  height: 100%;
+  min-height: 130px;
+  max-height: 12vw;
+  position: sticky;
+  top: 0;
+  z-index: 101;
+  background-color: #211e23;
 }
 .header > img, .header a {
   display: inline-block;
@@ -74,18 +80,16 @@ a {
   cursor: pointer;
 }
 .ui {
-  width: 16vw;
-  height: 16vw;
+  width: 66vw;
+  height: 66vw;
   overflow: hidden;
-  margin: 8px;
+  margin: 20px auto;
   transition-property: width,height;
   transition-duration: 0.5s;
   transition-delay: 0.2s;
   cursor: pointer;
 }
 .ui.active {
-  width: 100%;
-  height: 100%;
   pointer-events: none;
   z-index: 100;
 }
@@ -94,50 +98,90 @@ a {
   top: 0;
   left: 0;
   pointer-events: all;
-  width: 100vw;
-  height: 100vh;
-  transform: scale(1);
   z-index: 100;
 }
 .ui:hover {
-  width: 34vw;
-  height: 34vw;
   z-index: 9;
 }
 .ui embed {
   position: relative;
   pointer-events: none;
-  width: 1920px;
-  height: 1080px;
+  min-width: 100vw;
+  min-height: 100vw;
+  max-width: 100vw;
+  max-height: 100vw;
   transform-origin: top left;
-  transform: scale(0.5);
   background-color: #fff;
+  margin: 20px auto;
 }
 .footer {
-  grid-column-start: 2;
-  grid-column-end: 3;
+  grid-column-start: 1;
+  grid-column-end: 4;
   grid-row-start: 3;
   grid-row-end: 4;
-  display: block;
+  display: table;
   padding: 8px;
   margin: auto;
   width: 100%;
-  height: 100%;
+  height: 36px;
+  color: #fff;
+  text-align: center;
+  background-color: #222;
+  padding: 0;
+  margin: 20px auto;
+  position: sticky;
+  bottom: 0;
+  z-index: 101;
 }
+.footer span {
+  display: table-cell;
+  vertical-align: middle;
+}
+@media (min-width: 1000px) {
+  .header {
+    height: 12vw;
+  }
+  .ui embed {
+    min-width: 69vw;
+    min-height: 69vw;
+    transform: scale(0.5);
+    margin: 0 8px 8px 0;
+  }
+  .ui.active embed {
+    transform: scale(1);
+    width: 100vw;
+    height: 100vh;
+  }
+  .ui {
+    width: 16vw;
+    height: 16vw;
+    margin: 0 8px 0 0;
+  }
+  .ui.active {
+    width: 100%;
+    height: 100%;
 
+  }
+  .ui:hover {
+    width: 34vw;
+    height: 34vw;
+  }
+  .container {
+    grid-template-columns: repeat(auto-fit, 18vw);
+    grid-template-rows: repeat(auto-fit, 18vw);
+    margin-bottom: 100px;
+
+  }
+}
 </style>
 </head><body>  <!-- begin vue template --><div id="app">
-<div v-if="active && data[active]" class="modal">
-  <a @click="deactivate(active)">
-    <span class="button block" v-text="'X'"></span>
-  </a>
-</div>
 <!-- main content -->
 <div class="header" @click="deactivate(0)">
   <img class="img-responsive" src='https://s3.amazonaws.com/freecodecamp/freecodecamp_logo.svg' alt='learn to code javascript at freeCodeCamp logo'></img>
   <a class="tb-font-xl appTitle" href="https://github.com/freeCodeCamp/testable-projects-fcc"
     v-text="'fCC Test-able Projects'" target="_blank"></a>
   <div v-if="hov && data[hov]" class="appTitle" v-text="data[hov].name"></div>
+  <div v-else-if="!hov || !data[hov]" class="appTitle">&nbsp;</div>
 </div>
 <div class="container">
   <div class="ui img" v-if="keys !== ''" v-for="(k, i) in keys"
@@ -150,7 +194,7 @@ a {
     <!--embed :src="data[k].codepen"></embed-->
   </div>
 </div><!-- end main content container -->
-<div class="footer"></div>
+<div class="footer"><span>Happy Coding</span></div>
 </div><!-- end Vue template --> <!-- Vue for reactivity -->
 <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
 <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
